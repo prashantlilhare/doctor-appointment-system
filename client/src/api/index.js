@@ -1,13 +1,18 @@
 const BASE = import.meta.env.VITE_API_URL;
 
-const getHeaders = () => {
-  const token = localStorage.getItem('sovind_token');
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {})
+const getHeaders = (includeAuth = true) => {
+  const headers = {
+    'Content-Type': 'application/json'
   };
-};
 
+  const token = localStorage.getItem('sovind_token');
+
+  if (includeAuth && token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return headers;
+};
 export const api = {
   // Appointments
   createAppointment: (data) =>
@@ -24,7 +29,11 @@ export const api = {
 
   // Auth
   login: (data) =>
-    fetch(`${BASE}/auth/login`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) }).then(r => r.json()),
+  fetch(`${BASE}/auth/login`, {
+    method: 'POST',
+    headers: getHeaders(false), // ❌ no token
+    body: JSON.stringify(data)
+  }).then(r => r.json()),
 
   // Feedback
   createFeedback: (data) =>

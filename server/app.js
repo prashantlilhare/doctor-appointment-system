@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://doctor-appointment-system-three-pi.vercel.app/'],
+  origin: ['http://localhost:5173', 'https://doctor-appointment-system-zeta-olive.vercel.app'],
   credentials: true
 }));
 app.use(express.json());
