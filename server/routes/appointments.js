@@ -7,5 +7,8 @@ router.post('/create', createAppointment);
 router.get('/track/:phone', trackAppointments);
 router.get('/all', auth, getAllAppointments);
 router.patch('/update/:id', auth, updateAppointment);
+router.get("/", async (req, res) => {
+  res.send("Appointments API working ✅");
+});
 
 module.exports = router;
