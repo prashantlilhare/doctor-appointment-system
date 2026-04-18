@@ -269,20 +269,19 @@ tl.from(".about-line", {
   <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
 
     {/* 🧑‍⚕️ LEFT IMAGE */}
-    <div className="relative">
-      <div className="about-img w-60 h-60 md:w-80 md:h-80 rounded-3xl overflow-hidden shadow-xl items-center transition-all duration-700">
-        <img
-          src={(sovindabout)}
-          className="w-full h-full object-cover "
-        />
-      </div>
+  <div className="relative flex justify-center items-center md:block">
+  <div className="about-img w-60 h-60 md:w-80 md:h-80 rounded-3xl overflow-hidden shadow-xl items-center transition-all duration-700">
+    <img
+      src={sovindabout}
+      className="w-full h-full object-cover"
+    />
+  </div>
 
-      {/* floating badge */}
-      <div className="absolute -bottom-5 left-5 bg-teal-600 text-white px-4 py-2 rounded-xl shadow-lg text-sm">
-        10+ Years Experience
-      </div>
-    </div>
-
+  {/* floating badge */}
+  <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 md:left-5 md:translate-x-0 bg-teal-600 text-white px-4 py-2 rounded-xl shadow-lg text-sm">
+    10+ Years Experience
+  </div>
+</div>
     {/* 📖 RIGHT STORY */}
     <div className="space-y-4">
       <p className="about-line text-teal-600 text-4xl font-semibold tracking-wide">

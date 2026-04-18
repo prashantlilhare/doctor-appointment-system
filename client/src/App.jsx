@@ -4,6 +4,7 @@ import Home from './pages/Home.jsx';
 import Track from './pages/Track.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import AdminLoginModal from './components/AdminLoginModal.jsx';
+import NotFound from './pages/NotFound.jsx';
 
 export const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
@@ -31,6 +32,7 @@ function AppInner() {
         <Route path="/" element={<Home />} />
         <Route path="/track" element={<Track />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       {showLogin && <AdminLoginModal onClose={() => setShowLogin(false)} />}
     </AuthContext.Provider>
