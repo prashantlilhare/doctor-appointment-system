@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from "../api/index.js";
+import { Link } from "react-router-dom";
 
 const today = new Date().toISOString().split("T")[0];
 
@@ -124,12 +125,16 @@ export default function AppointmentForm() {
                 Book Again
               </button>
 
-              <a
+              <Link to="/track"
+              className="border border-gray-200 text-gray-600 px-6 py-3 rounded-full hover:border-teal-400 hover:text-teal-600 transition"
+               >Track →</Link>
+
+              {/* <a
                 href="/track"
                 className="border border-gray-200 text-gray-600 px-6 py-3 rounded-full hover:border-teal-400 hover:text-teal-600 transition"
               >
                 Track →
-              </a>
+              </a> */}
             </div>
           </motion.div>
         ) : (

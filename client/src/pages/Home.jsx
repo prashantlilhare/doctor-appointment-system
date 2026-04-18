@@ -376,17 +376,6 @@ tl.from(".about-line", {
           <p>Copyright © 2026 All Rights Reserved by SovindCare®</p>
         </div>
       </footer>
-
-      {/* FLOAT */}
-      <div className="fixed bottom-6 right-6 flex flex-col gap-3">
-        <a href="tel:+9197552775464" className="pulse-urgent bg-red-500 text-white px-5 py-3 rounded-full">
-          🚨 Call
-        </a>
-
-        <button onClick={openLogin} className="bg-teal-600 text-white px-5 py-3 rounded-full">
-          Admin
-        </button>
-      </div>
     </div>
   );
 }

@@ -12,10 +12,18 @@ export default function Track() {
 
   const handleTrack = async (e) => {
     e.preventDefault();
+    if (!phone.trim()) return;
     setLoading(true);
     try {
       const res = await api.trackAppointments(phone);
-      setAppointments(Array.isArray(res) ? res : []);
+
+const data =
+  res?.appointments ||
+  res?.data ||
+  res ||
+  [];
+
+setAppointments(Array.isArray(data) ? data : []);
     } catch {
       setAppointments([]);
     }
