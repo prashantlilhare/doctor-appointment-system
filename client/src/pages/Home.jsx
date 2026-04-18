@@ -141,7 +141,7 @@ tl.from(".about-line", {
         Book, track & get treatment — simple and fast.
       </p>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="flex items-center -ml-5 flex-wrap gap-3">
 
         <button
           onClick={() => document.getElementById("book")?.scrollIntoView({ behavior: "smooth" })}
@@ -167,11 +167,11 @@ tl.from(".about-line", {
     {/* RIGHT CARD */}
     <div className="flex justify-center relative">
 
-      <div className="absolute -top-5 right-10 bg-white text-gray-700 px-4 py-1 rounded-full text-xs shadow">
+      <div className="absolute -top-5  bg-white text-gray-700 px-4 py-1 rounded-full text-xs shadow">
         🟢 Available Today
       </div>
 
-      <div className="bg-white/10 backdrop-blur-2xl rounded-3xl p-6 w-80 shadow-2xl border border-white/20 hover:scale-105 transition">
+      <div className="bg-white/10 backdrop-blur-2xl -ml-5 rounded-3xl p-6 w-80 shadow-2xl border border-white/20 hover:scale-105 transition">
 
         <div className="flex flex-col items-center text-center text-white">
 
