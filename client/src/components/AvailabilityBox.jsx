@@ -27,28 +27,34 @@ export default function AvailabilityBox() {
   const [schedule, setSchedule] = useState(getDefaultSchedule);
   const [open, setOpen] = useState(false);
 
- useEffect(() => {
   const fetchSchedule = async () => {
-    try {
-      const data = await api.getSchedule();
+  try {
+    const data = await api.getSchedule();
 
-      const obj = { ...getDefaultSchedule() };
-      data.forEach((item) => {
-        obj[item.day] = {
-          enabled: item.isAvailable,
-          from: item.startTime,
-          to: item.endTime,
-        };
-      });
+    const obj = { ...getDefaultSchedule() };
+    data.forEach((item) => {
+      obj[item.day] = {
+        enabled: item.isAvailable,
+        from: item.startTime,
+        to: item.endTime,
+      };
+    });
 
-      setSchedule(obj);
-    } catch (err) {
-  console.error("Schedule fetch error:", err);
-  setSchedule(getDefaultSchedule());
-}
-  };
+    setSchedule(obj);
+  } catch (err) {
+    console.error("Schedule fetch error:", err);
+    setSchedule(getDefaultSchedule());
+  }
+};
 
+  useEffect(() => {
   fetchSchedule();
+
+  const interval = setInterval(() => {
+    fetchSchedule();
+  }, 1500);
+
+  return () => clearInterval(interval);
 }, []);
 
   const today = DAYS[new Date().getDay()];

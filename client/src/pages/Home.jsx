@@ -203,12 +203,12 @@ tl.from(".about-line", {
   <div className="max-w-5xl mx-auto bg-white/60 backdrop-blur-xl rounded-3xl shadow-lg border border-gray-100 grid grid-cols-3 text-center py-8">
 
     <div>
-      <h2 className="text-3xl font-bold text-teal-600 stat-number" data-value="2500">0</h2>
+      <h2 className="text-3xl font-bold text-teal-600 stat-number" data-value="2500+">0</h2>
       <p className="text-sm text-gray-500">Patients</p>
     </div>
 
     <div>
-      <h2 className="text-3xl font-bold text-teal-600 stat-number" data-value="98">0</h2>
+      <h2 className="text-3xl font-bold text-teal-600 stat-number" data-value="98%">0</h2>
       <p className="text-sm text-gray-500">Satisfaction %</p>
     </div>
 

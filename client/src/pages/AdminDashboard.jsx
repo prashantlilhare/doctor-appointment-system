@@ -106,6 +106,8 @@ export default function AdminDashboard() {
   const [updating, setUpdating] = useState(null);
   const [confirm, setConfirm] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Schedule state
   const [schedule, setSchedule] = useState(getDefaultSchedule);
@@ -135,24 +137,34 @@ export default function AdminDashboard() {
     fetchSchedule();
   }, []);
 
+
   const handleSaveSchedule = async () => {
-  try {
-    for (const day of Object.keys(schedule)) {
-      const value = schedule[day];
+    try {
+      setIsSaving(true);
+      setSaveSuccess(false);
 
-      await api.updateSchedule(day, {
-        isAvailable: value.enabled,
-        startTime: value.from,
-        endTime: value.to,
-      });
+      for (const day of Object.keys(schedule)) {
+        const value = schedule[day];
+
+        await api.updateSchedule(day, {
+          isAvailable: value.enabled,
+          startTime: value.from,
+          endTime: value.to,
+        });
+      }
+
+      setSaveSuccess(true);
+
+      setTimeout(() => {
+        setSaveSuccess(false);
+      }, 1500);
+    } catch (err) {
+      console.error(err);
+      alert("❌ Failed to save schedule");
+    } finally {
+      setIsSaving(false);
     }
-
-    alert("✅ Schedule updated successfully");
-  } catch (err) {
-    console.error(err);
-    alert("❌ Failed to save schedule");
-  }
-};
+  };
 
   // Todo state
   const [todos, setTodos] = useState(() => {
@@ -723,69 +735,83 @@ export default function AdminDashboard() {
 
                 {/* SCHEDULE */}
                 {activeTab === "schedule" && (
-                  <div className="max-w-2xl">
+                  <div className="w-full max-w-2xl">
                     <p className="text-gray-400 text-sm mb-6">
                       Toggle days on/off and set working hours for each day.
                     </p>
+
                     <div className="space-y-3">
                       {DAYS.map((day) => (
                         <div
                           key={day}
-                          className={`
-    bg-white/60 backdrop-blur-xl
-    rounded-2xl border border-white/40
-    p-4 transition-all
-    shadow-sm hover:shadow-md
-    ${schedule[day]?.enabled ? "ring-1 ring-teal-100" : "opacity-60"}
-  `}
+                          className={`bg-white/60 backdrop-blur-xl rounded-2xl border border-white/40 p-4 transition-all shadow-sm hover:shadow-md ${
+                            schedule[day]?.enabled
+                              ? "ring-1 ring-teal-100"
+                              : "opacity-60"
+                          }`}
                         >
-                          <div className="flex items-center gap-4">
-                            <button
-                              onClick={() =>
-                                updateLocalSchedule(day, {
-                                  ...schedule[day],
-                                  enabled: !schedule[day]?.enabled,
-                                })
-                              }
-                              className={`w-11 h-6 rounded-full transition-all relative shrink-0  shadow-inner ${schedule[day]?.enabled ? "bg-teal-500" : "bg-gray-200"}`}
-                            >
-                              <span
-                                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${schedule[day]?.enabled ? "translate-x-5" : ""}`}
-                              />
-                            </button>
-                            <span className="font-medium text-gray-700 w-24 shrink-0 text-sm">
-                              {day}
-                            </span>
-                            {schedule[day]?.enabled && (
-                              <div className="flex items-center gap-2 text-sm">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                            {/* Toggle + Day */}
+                            <div className="flex items-center gap-3 w-full sm:w-auto">
+                              <button
+                                onClick={() =>
+                                  updateLocalSchedule(day, {
+                                    ...schedule[day],
+                                    enabled: !schedule[day]?.enabled,
+                                  })
+                                }
+                                className={`w-11 h-6 rounded-full transition-all relative shrink-0 shadow-inner ${
+                                  schedule[day]?.enabled
+                                    ? "bg-teal-500"
+                                    : "bg-gray-200"
+                                }`}
+                              >
+                                <span
+                                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                                    schedule[day]?.enabled
+                                      ? "translate-x-5"
+                                      : ""
+                                  }`}
+                                />
+                              </button>
+
+                              <span className="font-medium text-gray-700 text-sm">
+                                {day}
+                              </span>
+                            </div>
+
+                            {/* Time Inputs */}
+                            {schedule[day]?.enabled ? (
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
                                 <input
                                   type="time"
                                   value={schedule[day]?.from}
                                   onChange={(e) =>
                                     updateLocalSchedule(day, {
                                       ...schedule[day],
-                                      enabled: !schedule[day]?.enabled,
+                                      from: e.target.value,
                                     })
                                   }
-                                  className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-teal-400"
+                                  className="w-full sm:w-auto border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-teal-400"
                                 />
-                                <span className="text-gray-400 text-xs">
+
+                                <span className="text-gray-400 text-xs hidden sm:block">
                                   to
                                 </span>
+
                                 <input
                                   type="time"
                                   value={schedule[day]?.to}
                                   onChange={(e) =>
                                     updateLocalSchedule(day, {
                                       ...schedule[day],
-                                      enabled: !schedule[day]?.enabled,
+                                      to: e.target.value,
                                     })
                                   }
-                                  className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-teal-400"
+                                  className="w-full sm:w-auto border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-teal-400"
                                 />
                               </div>
-                            )}
-                            {!schedule[day]?.enabled && (
+                            ) : (
                               <span className="text-xs text-gray-400">
                                 Day off
                               </span>
@@ -794,17 +820,29 @@ export default function AdminDashboard() {
                         </div>
                       ))}
                     </div>
+
+                    {/* Save Button */}
                     <div className="mt-6 flex justify-end">
                       <button
                         onClick={handleSaveSchedule}
-                        className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2 rounded-xl text-sm font-semibold shadow-md"
+                        disabled={isSaving}
+                        className={`px-5 py-2 rounded-xl text-sm font-semibold shadow-md transition-all duration-300 ${
+                          isSaving
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : saveSuccess
+                              ? "bg-green-500"
+                              : "bg-teal-600 hover:bg-teal-700 text-white"
+                        }`}
                       >
-                        Save Changes
+                        {isSaving
+                          ? "Saving..."
+                          : saveSuccess
+                            ? "Saved ✓"
+                            : "Save Changes"}
                       </button>
                     </div>
                   </div>
                 )}
-
                 {/* FEEDBACK */}
                 {activeTab === "feedback" && (
                   <div className="overflow-y-auto h-[600px]">
