@@ -1,28 +1,10 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
-const scheduleSchema = new mongoose.Schema(
-  {
-    day: {
-      type: String,
-      required: true,
-      unique: true, // Monday, Tuesday etc ek hi baar ho
-    },
-    isAvailable: {
-      type: Boolean,
-      default: true,
-    },
-    startTime: {
-      type: String,
-      default: "09:00",
-    },
-    endTime: {
-      type: String,
-      default: "18:00",
-    },
-  },
-  { timestamps: true }
-);
+const scheduleSchema = new mongoose.Schema({
+  day: String,
+  isAvailable: Boolean,
+  startTime: String,
+  endTime: String,
+});
 
-const Schedule = mongoose.model("Schedule", scheduleSchema);
-
-export default Schedule;
+module.exports = mongoose.model("Schedule", scheduleSchema);

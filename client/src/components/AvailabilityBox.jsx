@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '../api/index.js';
 
 const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+const getDefaultSchedule = () =>
+  DAYS.reduce(
+    (acc, day) => ({
+      ...acc,
+      [day]: { enabled: true, from: '06:00', to: '22:00' },
+    }),
+    {},
+  );
 
 // ✅ 12hr format helper
 const formatTime = (time) => {
@@ -14,13 +24,32 @@ const formatTime = (time) => {
 };
 
 export default function AvailabilityBox() {
-  const [schedule, setSchedule] = useState({});
+  const [schedule, setSchedule] = useState(getDefaultSchedule);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('sovind_schedule');
-    if (saved) setSchedule(JSON.parse(saved));
-  }, []);
+ useEffect(() => {
+  const fetchSchedule = async () => {
+    try {
+      const data = await api.getSchedule();
+
+      const obj = { ...getDefaultSchedule() };
+      data.forEach((item) => {
+        obj[item.day] = {
+          enabled: item.isAvailable,
+          from: item.startTime,
+          to: item.endTime,
+        };
+      });
+
+      setSchedule(obj);
+    } catch (err) {
+  console.error("Schedule fetch error:", err);
+  setSchedule(getDefaultSchedule());
+}
+  };
+
+  fetchSchedule();
+}, []);
 
   const today = DAYS[new Date().getDay()];
   const todayData = schedule[today];
@@ -67,7 +96,7 @@ export default function AvailabilityBox() {
 
                 {schedule[day]?.enabled ? (
                   <span className="text-teal-600 font-medium">
-                    {formatTime(schedule[day].from)} – {formatTime(schedule[day].to)}
+                    {formatTime(schedule[day]?.from)} – {formatTime(schedule[day]?.to)}
                   </span>
                 ) : (
                   <span className="text-red-400">OFF</span>

@@ -4,6 +4,7 @@ dns.setServers(['1.1.1.1', '8.8.8.8']);
 const app = require('./app');
 const connectDB = require('./config/db');
 const Admin = require('./models/Admin');
+const Schedule = require('./models/Schedule');
 
 
 
@@ -18,7 +19,45 @@ const seedAdmin = async () => {
   }
 };
 
-connectDB().then(async () => {
-  await seedAdmin();
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-});
+connectDB()
+  .then(async () => {
+    console.log("DB connected");
+
+    await seedAdmin();
+
+    // ✅ FIX: schedule seeding properly called
+    const seedSchedule = async () => {
+      const count = await Schedule.countDocuments();
+
+      if (count === 0) {
+        const days = [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday",
+        ];
+
+        const defaultSchedule = days.map((day) => ({
+          day,
+          isAvailable: true,
+          startTime: "06:00",
+          endTime: "22:00",
+        }));
+
+        await Schedule.insertMany(defaultSchedule);
+        console.log("Schedule seeded");
+      }
+    };
+
+    await seedSchedule(); // 🔥 THIS WAS MISSING
+
+    app.listen(PORT, () =>
+      console.log(`Server running on port ${PORT}`)
+    );
+  })
+  .catch((err) => {
+    console.error("DB CONNECTION FAILED:", err);
+  });

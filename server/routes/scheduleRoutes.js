@@ -1,35 +1,54 @@
-import express from "express";
-import Schedule from "../models/Schedule.js";
+const express = require("express");
+const Schedule = require("../models/Schedule");
 
 const router = express.Router();
 
-
-// 🔵 GET ALL SCHEDULES
+/* GET ALL SCHEDULE */
 router.get("/", async (req, res) => {
   try {
-    const schedule = await Schedule.find().sort({ createdAt: 1 });
-    res.status(200).json(schedule);
+    const data = await Schedule.find();
+    res.json(data);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({
+      message: "Failed to fetch schedule",
+      error: err.message,
+    });
   }
 });
 
-
-// 🟢 UPDATE / CREATE SINGLE DAY SCHEDULE
+/* PATCH (CREATE OR UPDATE DAY) */
 router.patch("/:day", async (req, res) => {
   try {
     const { day } = req.params;
+    const { isAvailable, startTime, endTime } = req.body;
+
+    if (!day) {
+      return res.status(400).json({ message: "Day is required" });
+    }
 
     const updated = await Schedule.findOneAndUpdate(
       { day },
-      { $set: req.body },
-      { new: true, upsert: true } // ⚠️ important: agar day nahi hai to create kar dega
+      {
+        $set: {
+          day,
+          isAvailable,
+          startTime,
+          endTime,
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+      }
     );
 
-    res.status(200).json(updated);
+    res.json(updated);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({
+      message: "Schedule update failed",
+      error: err.message,
+    });
   }
 });
 
-export default router;
+module.exports = router;

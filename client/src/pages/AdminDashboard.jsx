@@ -17,6 +17,8 @@ const isToday = (dateStr) => {
   );
 };
 
+// console.log("SCHEDULE UPDATE TRIGGERED", updatedSchedule);
+
 // Confirmation Modal
 function ConfirmModal({
   title,
@@ -82,6 +84,15 @@ const DAYS = [
   "Sunday",
 ];
 
+const getDefaultSchedule = () =>
+  DAYS.reduce(
+    (acc, day) => ({
+      ...acc,
+      [day]: { enabled: true, from: "06:00", to: "22:00" },
+    }),
+    {},
+  );
+
 export default function AdminDashboard() {
   const { isAdmin, logout } = useAuth();
   const navigate = useNavigate();
@@ -97,13 +108,51 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Schedule state
-const [schedule, setSchedule] = useState(() => {
-  const obj = {};
-  DAYS.forEach((d) => {
-    obj[d] = { enabled: d !== "Sunday", from: "09:00", to: "18:00" };
-  });
-  return obj;
-});
+  const [schedule, setSchedule] = useState(getDefaultSchedule);
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const data = await api.getSchedule();
+
+        const obj = { ...getDefaultSchedule() };
+
+        data.forEach((item) => {
+          obj[item.day] = {
+            enabled: item.isAvailable,
+            from: item.startTime,
+            to: item.endTime,
+          };
+        });
+
+        setSchedule(obj);
+      } catch (err) {
+        console.error("schedule fetch error", err);
+        setSchedule(getDefaultSchedule());
+      }
+    };
+
+    fetchSchedule();
+  }, []);
+
+  const handleSaveSchedule = async () => {
+  try {
+    for (const day of Object.keys(schedule)) {
+      const value = schedule[day];
+
+      await api.updateSchedule(day, {
+        isAvailable: value.enabled,
+        startTime: value.from,
+        endTime: value.to,
+      });
+    }
+
+    alert("✅ Schedule updated successfully");
+  } catch (err) {
+    console.error(err);
+    alert("❌ Failed to save schedule");
+  }
+};
 
   // Todo state
   const [todos, setTodos] = useState(() => {
@@ -182,30 +231,13 @@ const [schedule, setSchedule] = useState(() => {
     await api.approveFeedback(id);
     await loadData();
   };
-const saveSchedule = async (updatedSchedule) => {
-  try {
-    setSchedule(updatedSchedule); // instant UI update
 
-    await Promise.all(
-      Object.keys(updatedSchedule).map((day) =>
-        fetch(`${import.meta.env.VITE_API_URL}/api/schedule/${day}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            isAvailable: updatedSchedule[day].enabled,
-            startTime: updatedSchedule[day].from,
-            endTime: updatedSchedule[day].to,
-            day: day,
-          }),
-        })
-      )
-    );
-  } catch (error) {
-    console.error("Schedule update failed:", error);
-  }
-};
+  const updateLocalSchedule = (day, value) => {
+    setSchedule((prev) => ({
+      ...prev,
+      [day]: value,
+    }));
+  };
 
   const addTodo = () => {
     if (!todoInput.trim()) return;
@@ -563,7 +595,7 @@ const saveSchedule = async (updatedSchedule) => {
                       {/* UPCOMING */}
                       <div className="bg-white/60 backdrop-blur-xl rounded-3xl border border-white/40 p-6 shadow-sm">
                         <h3 className="text-sm font-semibold text-gray-700 mb-5">
-                          🗓 Upcoming 
+                          🗓 Upcoming
                         </h3>
 
                         {upcoming.length === 0 ? (
@@ -580,7 +612,7 @@ const saveSchedule = async (updatedSchedule) => {
                                 <p className="text-md font-medium text-gray-700">
                                   {a.name}
                                 </p>
-                                 <p className="text-sm font-md  text-gray-500">
+                                <p className="text-sm font-md  text-gray-500">
                                   {a.symptoms}
                                 </p>
                                 <p className="text-xs text-gray-400">
@@ -704,41 +736,35 @@ const saveSchedule = async (updatedSchedule) => {
     rounded-2xl border border-white/40
     p-4 transition-all
     shadow-sm hover:shadow-md
-    ${schedule[day].enabled ? "ring-1 ring-teal-100" : "opacity-60"}
+    ${schedule[day]?.enabled ? "ring-1 ring-teal-100" : "opacity-60"}
   `}
                         >
                           <div className="flex items-center gap-4">
                             <button
                               onClick={() =>
-                                saveSchedule({
-                                  ...schedule,
-                                  [day]: {
-                                    ...schedule[day],
-                                    enabled: !schedule[day].enabled,
-                                  },
+                                updateLocalSchedule(day, {
+                                  ...schedule[day],
+                                  enabled: !schedule[day]?.enabled,
                                 })
                               }
-                              className={`w-11 h-6 rounded-full transition-all relative shrink-0  shadow-inner ${schedule[day].enabled ? "bg-teal-500" : "bg-gray-200"}`}
+                              className={`w-11 h-6 rounded-full transition-all relative shrink-0  shadow-inner ${schedule[day]?.enabled ? "bg-teal-500" : "bg-gray-200"}`}
                             >
                               <span
-                                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${schedule[day].enabled ? "translate-x-5" : ""}`}
+                                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${schedule[day]?.enabled ? "translate-x-5" : ""}`}
                               />
                             </button>
                             <span className="font-medium text-gray-700 w-24 shrink-0 text-sm">
                               {day}
                             </span>
-                            {schedule[day].enabled && (
+                            {schedule[day]?.enabled && (
                               <div className="flex items-center gap-2 text-sm">
                                 <input
                                   type="time"
-                                  value={schedule[day].from}
+                                  value={schedule[day]?.from}
                                   onChange={(e) =>
-                                    saveSchedule({
-                                      ...schedule,
-                                      [day]: {
-                                        ...schedule[day],
-                                        from: e.target.value,
-                                      },
+                                    updateLocalSchedule(day, {
+                                      ...schedule[day],
+                                      enabled: !schedule[day]?.enabled,
                                     })
                                   }
                                   className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-teal-400"
@@ -748,21 +774,18 @@ const saveSchedule = async (updatedSchedule) => {
                                 </span>
                                 <input
                                   type="time"
-                                  value={schedule[day].to}
+                                  value={schedule[day]?.to}
                                   onChange={(e) =>
-                                    saveSchedule({
-                                      ...schedule,
-                                      [day]: {
-                                        ...schedule[day],
-                                        to: e.target.value,
-                                      },
+                                    updateLocalSchedule(day, {
+                                      ...schedule[day],
+                                      enabled: !schedule[day]?.enabled,
                                     })
                                   }
                                   className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-teal-400"
                                 />
                               </div>
                             )}
-                            {!schedule[day].enabled && (
+                            {!schedule[day]?.enabled && (
                               <span className="text-xs text-gray-400">
                                 Day off
                               </span>
@@ -771,9 +794,14 @@ const saveSchedule = async (updatedSchedule) => {
                         </div>
                       ))}
                     </div>
-                    <p className="text-xs text-gray-400 mt-4">
-                      ✅ Schedule saved automatically.
-                    </p>
+                    <div className="mt-6 flex justify-end">
+                      <button
+                        onClick={handleSaveSchedule}
+                        className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2 rounded-xl text-sm font-semibold shadow-md"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
                   </div>
                 )}
 
@@ -1076,7 +1104,6 @@ const saveSchedule = async (updatedSchedule) => {
 //       })}
 // </p>
 
-
 //           </div>
 //           <p className="text-xs text-gray-400">{appt.phone}</p>
 //         </div>
@@ -1152,7 +1179,6 @@ const saveSchedule = async (updatedSchedule) => {
 //   );
 // }
 
-
 function AppointmentCard({ appt, updating, onAction }) {
   const isUpdating = (s) => updating === appt._id + s;
 
@@ -1184,17 +1210,15 @@ function AppointmentCard({ appt, updating, onAction }) {
           appt.condition === "Urgent"
             ? "bg-red-500"
             : appt.status === "Accepted"
-            ? "bg-green-500"
-            : "bg-teal-500"
+              ? "bg-green-500"
+              : "bg-teal-500"
         }`}
       />
 
       {/* HEADER */}
       <div className="flex justify-between items-start mb-4 pl-2">
         <div>
-          <h3 className="text-lg font-semibold text-slate-800">
-            {appt.name}
-          </h3>
+          <h3 className="text-lg font-semibold text-slate-800">{appt.name}</h3>
 
           <p className="text-xs text-slate-500 mt-1">{appt.phone}</p>
 
@@ -1221,7 +1245,7 @@ function AppointmentCard({ appt, updating, onAction }) {
 
           {appt.condition === "Urgent" && (
             <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-600 font-medium">
-             🔴 URGENT
+              🔴 URGENT
             </span>
           )}
         </div>
@@ -1230,16 +1254,12 @@ function AppointmentCard({ appt, updating, onAction }) {
       {/* DETAILS */}
       <div className="grid md:grid-cols-2 gap-3 mb-5 pl-2">
         <div className="bg-white rounded-xl p-3 border border-slate-200 shadow-sm">
-          <p className="text-[11px] text-slate-400 mb-1 uppercase">
-            Symptoms
-          </p>
+          <p className="text-[11px] text-slate-400 mb-1 uppercase">Symptoms</p>
           <p className="text-sm text-slate-700">{appt.symptoms}</p>
         </div>
 
         <div className="bg-white rounded-xl p-3 border border-slate-200 shadow-sm">
-          <p className="text-[11px] text-slate-400 mb-1 uppercase">
-            Address
-          </p>
+          <p className="text-[11px] text-slate-400 mb-1 uppercase">Address</p>
           <p className="text-sm text-slate-700">{appt.address}</p>
         </div>
       </div>
