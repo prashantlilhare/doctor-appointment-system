@@ -6,7 +6,7 @@ const scheduleRoutes = require('./routes/scheduleRoutes');
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://doctor-appointment-system-zeta-olive.vercel.app'],
+  origin: ['http://localhost:5173', 'https://sovindcare.vercel.app'],
   credentials: true
 }));
 app.use(express.json());
