@@ -5,6 +5,8 @@ const app = require('./app');
 const connectDB = require('./config/db');
 const Admin = require('./models/Admin');
 const Schedule = require('./models/Schedule');
+const bcrypt = require("bcryptjs");
+
 
 
 
@@ -13,9 +15,14 @@ const PORT = process.env.PORT || 5000;
 
 const seedAdmin = async () => {
   const exists = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
+
   if (!exists) {
-    await Admin.create({ email: process.env.ADMIN_EMAIL, password: process.env.ADMIN_PASSWORD });
-    console.log('Admin seeded:', process.env.ADMIN_EMAIL);
+    await Admin.create({
+      email: process.env.ADMIN_EMAIL,
+      password: process.env.ADMIN_PASSWORD, // plain
+    });
+
+    console.log("Admin seeded:", process.env.ADMIN_EMAIL);
   }
 };
 
@@ -61,3 +68,24 @@ connectDB()
   .catch((err) => {
     console.error("DB CONNECTION FAILED:", err);
   });
+
+// register route for creating admin (for testing purposes only, remove in production)
+  
+
+
+// app.get("/create-admin", async (req, res) => {
+//   try {
+//     const hashedPassword = await bcrypt.hash("pravesh455", 10);
+
+//     await User.create({
+//       email: "admin@santosh.com",
+//       password: hashedPassword,
+//       role: "admin",
+//     });
+
+//     res.send("✅ Admin Created");
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Error creating admin");
+//   }
+// });

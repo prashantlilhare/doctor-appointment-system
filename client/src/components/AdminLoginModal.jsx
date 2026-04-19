@@ -70,7 +70,7 @@ export default function AdminLoginModal({ onClose }) {
               <form onSubmit={handleLogin} className="flex flex-col gap-4">
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">Email</label>
-                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="admin@sovindcare.com" className={inputClass} />
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="@xyz.com" className={inputClass} />
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">Password</label>
