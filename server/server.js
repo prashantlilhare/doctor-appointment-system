@@ -5,6 +5,9 @@ const app = require('./app');
 const connectDB = require('./config/db');
 const Admin = require('./models/Admin');
 
+
+
+
 const PORT = process.env.PORT || 5000;
 
 const seedAdmin = async () => {

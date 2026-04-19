@@ -97,17 +97,13 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Schedule state
-  const [schedule, setSchedule] = useState(() => {
-    const saved = localStorage.getItem("sovind_schedule");
-    if (saved) return JSON.parse(saved);
-    return DAYS.reduce(
-      (acc, d) => ({
-        ...acc,
-        [d]: { enabled: d !== "Sunday", from: "09:00", to: "18:00" },
-      }),
-      {},
-    );
+const [schedule, setSchedule] = useState(() => {
+  const obj = {};
+  DAYS.forEach((d) => {
+    obj[d] = { enabled: d !== "Sunday", from: "09:00", to: "18:00" };
   });
+  return obj;
+});
 
   // Todo state
   const [todos, setTodos] = useState(() => {
@@ -186,11 +182,30 @@ export default function AdminDashboard() {
     await api.approveFeedback(id);
     await loadData();
   };
+const saveSchedule = async (updatedSchedule) => {
+  try {
+    setSchedule(updatedSchedule); // instant UI update
 
-  const saveSchedule = (newSched) => {
-    setSchedule(newSched);
-    localStorage.setItem("sovind_schedule", JSON.stringify(newSched));
-  };
+    await Promise.all(
+      Object.keys(updatedSchedule).map((day) =>
+        fetch(`${import.meta.env.VITE_API_URL}/api/schedule/${day}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            isAvailable: updatedSchedule[day].enabled,
+            startTime: updatedSchedule[day].from,
+            endTime: updatedSchedule[day].to,
+            day: day,
+          }),
+        })
+      )
+    );
+  } catch (error) {
+    console.error("Schedule update failed:", error);
+  }
+};
 
   const addTodo = () => {
     if (!todoInput.trim()) return;
