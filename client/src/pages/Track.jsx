@@ -17,7 +17,7 @@ export default function Track() {
     try {
       const res = await api.trackAppointments(phone);
 
-const data =
+const data = 
   res?.appointments ||
   res?.data ||
   res ||

@@ -36,7 +36,7 @@ function AppInner() {
       </Routes>
       {showLogin && <AdminLoginModal onClose={() => setShowLogin(false)} />}
     </AuthContext.Provider>
-  );
+  ); 
 }
 
 export default function App() {

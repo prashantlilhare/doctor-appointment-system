@@ -63,7 +63,7 @@ export default function AdminLoginModal({ onClose }) {
 
               {error && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600 flex items-center gap-2">
-                  <span>⚠️</span> {error}
+                  <span>⚠️</span> {error} 
                 </div>
               )}
 
