@@ -7,4 +7,6 @@ const scheduleSchema = new mongoose.Schema({
   endTime: String,
 });
 
+scheduleSchema.index({ day: 1 }, { unique: true });
+
 module.exports = mongoose.model("Schedule", scheduleSchema);

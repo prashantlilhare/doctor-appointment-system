@@ -14,4 +14,8 @@ const appointmentSchema = new mongoose.Schema({
   status: { type: String, enum: ['Pending', 'Accepted', 'Rejected', 'Completed'], default: 'Pending' }
 }, { timestamps: true });
 
+// Optimize frequent queries
+appointmentSchema.index({ phone: 1 });
+appointmentSchema.index({ date: 1 });
+
 module.exports = mongoose.model('Appointment', appointmentSchema);

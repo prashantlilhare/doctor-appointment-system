@@ -48,14 +48,9 @@ export default function AvailabilityBox() {
 };
 
   useEffect(() => {
-  fetchSchedule();
-
-  const interval = setInterval(() => {
     fetchSchedule();
-  }, 1500);
-
-  return () => clearInterval(interval);
-}, []);
+    // 🚀 FIXED: Removed 1.5s interval to prevent API spam and UI lag
+  }, []);
 
   const today = DAYS[new Date().getDay()];
   const todayData = schedule[today];

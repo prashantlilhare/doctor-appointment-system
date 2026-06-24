@@ -7,4 +7,6 @@ const feedbackSchema = new mongoose.Schema({
   approved: { type: Boolean, default: false }
 }, { timestamps: true });
 
+feedbackSchema.index({ approved: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Feedback', feedbackSchema);

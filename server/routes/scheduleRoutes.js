@@ -1,23 +1,21 @@
 const express = require("express");
 const Schedule = require("../models/Schedule");
+const auth = require('../config/authMiddleware');
 
 const router = express.Router();
 
-/* GET ALL SCHEDULE */
-router.get("/", async (req, res) => {
+/* GET ALL SCHEDULE (Public) */
+router.get("/", async (req, res, next) => {
   try {
     const data = await Schedule.find();
     res.json(data);
   } catch (err) {
-    res.status(500).json({
-      message: "Failed to fetch schedule",
-      error: err.message,
-    });
+    next(err);
   }
 });
 
-/* PATCH (CREATE OR UPDATE DAY) */
-router.patch("/:day", async (req, res) => {
+/* PATCH (CREATE OR UPDATE DAY) (Protected) */
+router.patch("/:day", auth, async (req, res, next) => {
   try {
     const { day } = req.params;
     const { isAvailable, startTime, endTime } = req.body;
@@ -44,10 +42,7 @@ router.patch("/:day", async (req, res) => {
 
     res.json(updated);
   } catch (err) {
-    res.status(500).json({
-      message: "Schedule update failed",
-      error: err.message,
-    });
+    next(err);
   }
 });
 

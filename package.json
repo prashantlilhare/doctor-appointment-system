@@ -2,6 +2,7 @@
   "name": "sovindcare",
   "version": "1.0.0",
   "scripts": {
+    "start": "node server/server.js",
     "dev:server": "node server/server.js",
     "dev:client": "cd client && npx vite --port 5173",
     "install:all": "npm install && cd client && npm install"
