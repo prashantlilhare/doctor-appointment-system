@@ -58,7 +58,7 @@ export const api = {
   updateSchedule: (day, data) =>
     fetch(`${API_BASE}/schedule/${day}`, {
       method: 'PATCH',
-      headers: getHeaders(false),
+      headers: getHeaders(true),
       body: JSON.stringify(data),
     }).then((r) => r.json()),
 };

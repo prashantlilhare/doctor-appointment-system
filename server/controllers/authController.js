@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 
 
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (email !== process.env.ADMIN_EMAIL) {
@@ -19,7 +19,7 @@ const login = async (req, res) => {
     const token = jwt.sign({ id: admin._id, email: admin.email }, process.env.JWT_SECRET, { expiresIn: '8h' });
     res.json({ token, email: admin.email });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    next(err);
   }
 };
 

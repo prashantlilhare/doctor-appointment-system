@@ -69,23 +69,4 @@ connectDB()
     console.error("DB CONNECTION FAILED:", err);
   });
 
-// register route for creating admin (for testing purposes only, remove in production)
-  
-
-
-// app.get("/create-admin", async (req, res) => {
-//   try {
-//     const hashedPassword = await bcrypt.hash("pravesh455", 10);
-
-//     await User.create({
-//       email: "admin@santosh.com",
-//       password: hashedPassword,
-//       role: "admin",
-//     });
-
-//     res.send("✅ Admin Created");
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Error creating admin");
-//   }
-// });
+// Removed insecure admin creation endpoint for production

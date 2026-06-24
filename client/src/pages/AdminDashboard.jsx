@@ -334,13 +334,13 @@ export default function AdminDashboard() {
           {/* Top Brand */}
           <div className="p-6 border-b border-gray-100/60">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-700 text-white flex items-center justify-center font-bold shadow-md">
-                S
+              <div className="w-11 h-11 rounded-lg shadow-sm bg-white p-0.5">
+                <img src="/iconfav.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
 
               <div className="leading-tight">
                 <p className="text-[15px] font-semibold text-gray-800">
-                  SovindCare
+                  CareClinic
                 </p>
                 <p className="text-xs text-gray-400">Doctor Admin Panel</p>
               </div>

@@ -48,7 +48,7 @@ setAppointments(Array.isArray(data) ? data : []);
               📍
             </div>
 
-            <h1 className="font-display text-3xl md:text-4xl mb-2">
+            <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tighter mb-3">
               Track Your Appointment
             </h1>
 

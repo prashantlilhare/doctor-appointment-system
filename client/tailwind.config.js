@@ -14,8 +14,8 @@ export default {
         }
       },
       fontFamily: {
-        display: ['"DM Serif Display"', 'serif'],
-        body: ['"DM Sans"', 'sans-serif'],
+        display: ['"Plus Jakarta Sans"', 'sans-serif'],
+        body: ['"Inter"', 'sans-serif'],
       }
     }
   },

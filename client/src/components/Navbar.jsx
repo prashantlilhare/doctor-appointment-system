@@ -31,11 +31,11 @@ export default function Navbar() {
           onClick={() => handleScroll("home")}
           className="flex items-center gap-3 cursor-pointer group"
         >
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-500 to-cyan-500 flex items-center justify-center text-white font-bold shadow-md group-hover:scale-105 transition">
-            S
+          <div className="w-10 h-10 rounded-lg shadow-sm group-hover:scale-105 transition bg-white p-0.5">
+            <img src="/iconfav.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <span className="text-lg md:text-xl font-semibold text-gray-800 group-hover:text-teal-600 transition">
-            SovindCare
+            CareClinic
           </span>
         </div>
 
