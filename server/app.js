@@ -23,7 +23,7 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'https://sovindcare.vercel.app'],
+  origin: ['http://localhost:5173', 'http://localhost:5174', process.env.CLIENT_URL],
   credentials: true
 }));
 app.options('*', cors()); // Enable preflight requests for all routes
@@ -37,7 +37,7 @@ app.use('/api/schedule', scheduleRoutes);
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  
+
   let status = err.status || 500;
   let message = err.message || 'Internal Server Error';
 
