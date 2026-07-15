@@ -47,4 +47,14 @@ const approveFeedback = async (req, res, next) => {
   }
 };
 
-module.exports = { createFeedback, getAllFeedback, getAllFeedbackAdmin, approveFeedback };
+const deleteFeedback = async (req, res, next) => {
+  try {
+    const feedback = await Feedback.findByIdAndDelete(req.params.id);
+    if (!feedback) return res.status(404).json({ message: 'Feedback not found' });
+    res.json({ message: 'Feedback deleted' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { createFeedback, getAllFeedback, getAllFeedbackAdmin, approveFeedback, deleteFeedback };
