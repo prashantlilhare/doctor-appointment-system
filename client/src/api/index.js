@@ -51,6 +51,9 @@ export const api = {
   approveFeedback: (id) =>
     fetch(`${API_BASE}/feedback/approve/${id}`, { method: 'PATCH', headers: getHeaders() }).then((r) => r.json()),
 
+  deleteFeedback: (id) =>
+    fetch(`${API_BASE}/feedback/${id}`, { method: 'DELETE', headers: getHeaders() }).then((r) => r.json()),
+
   // Schedule
   getSchedule: () =>
     fetch(`${API_BASE}/schedule`, { headers: getHeaders(false) }).then((r) => r.json()),

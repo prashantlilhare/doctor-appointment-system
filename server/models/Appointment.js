@@ -5,7 +5,7 @@ const appointmentSchema = new mongoose.Schema({
   phone: { type: String, required: true, trim: true },
   symptoms: { type: String, required: true },
   date: { type: Date, required: true },
-  condition: { type: String, enum: ['Normal', 'Urgent'], default: 'Normal' },
+  visitType: { type: String, enum: ['Clinic Visit', 'Home Visit'], default: 'Clinic Visit' },
   address: { type: String, required: true },
   location: {
     lat: { type: Number },
